@@ -1,0 +1,149 @@
+/* Start FrameWork */
+.clear{
+    clear: both;
+}
+.btn{
+    padding: 10px;
+    width: 100%;
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: transparent;
+    color: white;
+}
+*{
+    text-decoration: none;
+}
+/* End FrameWork */
+
+body{
+    margin: 0;
+    background: url('../images/Login_BACKGROUND.jpg') no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.wrapper{
+    display: flex;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+}
+.AuthArea{
+    width: 50%;
+}
+
+.AuthArea .Header{
+    height: 72px;
+    width: 100%;
+    position: relative;
+    background: #0e1a35;
+}
+
+.AuthArea .Header .Logo{
+    position: absolute;
+    left: 15px;
+    top: 10px;
+}
+
+.AuthArea .Header .Logo img{
+    height: 50px;
+    margin-top: 5px;
+}
+
+.AuthArea .Header .Switch{
+    position: absolute;
+    right: 0;
+    top: 10px
+}
+
+.AuthArea .Header .Switch .switchUl{
+    display: inline-flex;
+    list-style-type: none;
+    margin: 0;
+}
+
+.AuthArea .Header .Switch .switchUl li{
+    padding: 16px 8px 20px 12px;
+    color: white;
+    font-size: 18px;
+    font-family: monospace;
+    cursor: pointer;
+}
+.AuthArea .Header .Switch .switchUl li:hover{
+    color: #C6B9B9;
+}
+
+.AuthArea .Header .Switch .switchUl .active{
+    border-bottom: 4px solid #5584ff;
+    color: #C6B9B9;
+}
+
+.AuthArea .Body {
+    background-color: white;
+}
+
+.AuthArea .Body .message{
+    width: 50%;
+    margin: 0 auto;
+    padding: 50px 0;
+}
+.AuthArea .Body .message h3{
+    text-align: center;
+    color: #99a5bd;
+    font-size: 25px;
+    font-family: serif;
+    font-weight: 300;
+    margin: 0;
+}
+.AuthArea .Body .message h3 span{
+    color: #a4bdfd;
+}
+.AuthArea .Body .form{
+    width: 40%;
+    margin: 0 auto;
+}
+
+.inputGroupe{
+    position: relative;
+}
+.inputGroupe:nth-child(2){
+    margin-top: 20px;
+}
+.inputGroupe label{
+    display: flex;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 5px;
+    justify-content: center;
+    align-items: center;
+    color: #c4d4fc;
+}
+.inputGroupe input{
+    width: 100%;
+    padding: 10px 10px 6px 40px;
+    border: none;
+    border-bottom: 1px solid #d4d9e3;
+    outline: none;
+}
+.Button{
+    width: 80%;
+    margin: 50px auto;
+    padding-bottom: 50px;
+}
+.LoginBTN{
+    background: #5584ff;
+    color: white;
+    border-radius: 30px;
+    font-size: 16px;
+    font-family: monospace;
+}
+.LoginBTN:hover{
+    background: rgba(85, 132, 255, 0.77);
+}

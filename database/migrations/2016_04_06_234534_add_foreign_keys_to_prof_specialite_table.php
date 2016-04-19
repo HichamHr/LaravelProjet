@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class AddForeignKeysToProfSpecialiteTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::table('prof_specialite', function(Blueprint $table)
+		{
+			$table->foreign('id_prof', 'prof_specialite_foreignKey_Prof')->references('CIN')->on('prof')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('id_specialite', 'prof_specialite_foreignKey_Specialite')->references('id')->on('specialite')->onUpdate('CASCADE')->onDelete('CASCADE');
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::table('prof_specialite', function(Blueprint $table)
+		{
+			$table->dropForeign('prof_specialite_foreignKey_Prof');
+			$table->dropForeign('prof_specialite_foreignKey_Specialite');
+		});
+	}
+
+}
