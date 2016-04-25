@@ -22,26 +22,37 @@ class Passage extends Controller
     
     public function getIndex(){
         $Passages = \App\Modules\Passage::all();
-        return response()->json($Passages, 200);
+        return response()->json(compact("Passages"), 200);
     }
     public function getExame($id){
-        $Passages = \App\Modules\Passage::find($id);
-        return response()->json($Passages->Exam, 200);
+        $Passage = \App\Modules\Passage::find($id);
+        $Exame = null;
+        if ($Passage != null)
+            $Exame = $Passage->Exam;
+        return response()->json(compact("Exame"), 200);
     }
     public function getQuestion($id){
-        $Passages = \App\Modules\Passage::find($id);
-        return response()->json($Passages->Quest, 200);
+        $Passage = \App\Modules\Passage::find($id);
+        $Quest = null;
+        if ($Passage != null)
+            $Quest = $Passage->Quest;
+        return response()->json(compact("Quest"), 200);
     }
     public function getReponse($id){
-        $Passages = \App\Modules\Passage::find($id);
-        return response()->json($Passages->Reponses, 200);
+        $Passage = \App\Modules\Passage::find($id);
+        $Reponses = null;
+        if ($Passage != null)
+            $Reponses = $Passage->Reponses;
+        return response()->json(compact("Reponses"), 200);
     }
     public function getFull($id){
-        $Passages = \App\Modules\Passage::find($id);
-        $Passages->Exam;
-        $Passages->Quest;
-        $Passages->Reponses;
-        return response()->json($Passages, 200);
+        $Passage = \App\Modules\Passage::find($id);
+        if($Passage != null){
+            $Passage->Exam;
+            $Passage->Quest;
+            $Passage->Reponses;
+        }
+        return response()->json(compact('Passage'), 200);
     }
 
     public function postNew(Request $request){
@@ -71,12 +82,12 @@ class Passage extends Controller
                 if ($passage->save()) {
                     return response()->json($passage, 200);
                 } else {
-                    return response()->json(array('error' => true, 'Message' => "Error_Add"), 401);
+                    return response()->json(array('error' => true, 'Message' => "Error_Add"), 500);
                 }
             }
 
         }
-        return response()->json(['error' => true, 'message' => $validation], 401);
+        return response()->json(['error' => true, 'message' => $validation], 406);
         
     }
 

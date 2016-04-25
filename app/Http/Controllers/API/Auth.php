@@ -101,31 +101,6 @@ class Auth extends Controller
             $user->Admin;
             return response()->json(array('compt' => $user), 200);
         }
-        return response()->json(array('success' => false, 'Message' => 'invalide_Profile'), 401);
-    }
-
-    public function UpdateAvatar(Request $request)
-    {
-        $validation = Validation::Avatar($request);
-        if($validation === "done"){
-            $user = JWTAuth::parseToken()->authenticate();
-            $tblName = "";
-            if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
-                $tblName = "etudiant";
-            } else if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
-                $tblName = "prof";
-            } else if ($user->hasRole(env('ADMIN_PERMISSION_NAME', "Admin"))) {
-                $tblName = "admin";
-            }
-
-            $imageName = $user->id . '.' . $request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move(base_path() . '/public/images/avatars/', $imageName);
-            echo '<img src="'.asset("images/avatars/$imageName").'"/>';
-
-            DB::table($tblName)->where('compte_id', $user->id)->update(['avatar' => asset("images/avatars/$imageName")]);
-            return response()->json(['error' => false,'image'=>asset("images/avatars/$imageName")], 200);
-        }else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
-        }
+        return response()->json(array('success' => false, 'Message' => 'invalide_Profile'), 404);
     }
 }

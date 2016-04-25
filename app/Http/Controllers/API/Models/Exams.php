@@ -25,30 +25,36 @@ class Exams extends Controller
         return response()->json(compact('Exames'), 200);
     }
     public function getShow($id){
-        $Exames = \App\Modules\Exams::find($id);
-        return response()->json(compact('Exames'), 200);
+        $Exame = \App\Modules\Exams::find($id);
+        return response()->json(compact('Exame'), 200);
     }
     public function getEtudiant($id){
-        $Exames = \App\Modules\Exams::find($id);
-        $Etudiant = $Exames->Etudiant_;
+        $Exame = \App\Modules\Exams::find($id);
+        if($Exame != null)
+            $Etudiant = $Exame->Etudiant_;
         return response()->json(compact('Etudiant'), 200);
     }
     public function getPile($id){
-        $Exames = \App\Modules\Exams::find($id);
-        $Pile = $Exames->Pile_;
+        $Exame = \App\Modules\Exams::find($id);
+        if($Exame != null)
+            $Pile = $Exame->Pile_;
         return response()->json(compact('Pile'), 200);
     }
     public function getPassages($id){
-        $Exames = \App\Modules\Exams::find($id);
-        $Passages = $Exames->Passages;
+        $Exame = \App\Modules\Exams::find($id);
+        if($Exame != null)
+            $Passages = $Exame->Passages;
         return response()->json(compact('Passages'), 200);
     }
     public function getFull($id){
-        $Exames = \App\Modules\Exams::find($id);
-        $Exames->setRelation('Etudiant_',$Exames->Etudiant_);
-        $Exames->setRelation('Pile_',$Exames->Pile_);
-        $Exames->setRelation('Passages',$Exames->Passages);
-        return response()->json(compact('Exames'), 200);
+        $Exame = \App\Modules\Exams::find($id);
+        if($Exame != null){
+            $Exame->Etudiant_;
+            $Exame->Pile_;
+            $Exame->Passages;
+        }
+
+        return response()->json(compact('Exame'), 200);
     }
 
     public function postNew(Request $request){
@@ -65,11 +71,11 @@ class Exams extends Controller
             if ($exame->saveOrFail()) {
                 return response()->json($exame, 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
             }
         }
         else{
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
 
@@ -77,6 +83,7 @@ class Exams extends Controller
         \App\Modules\Exams::where('id',$id)->update([
             'description' => $request->input('description'),
         ]);
+        return response()->json(['error' => false], 200);
     }
     
 }

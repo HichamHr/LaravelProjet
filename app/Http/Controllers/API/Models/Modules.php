@@ -24,15 +24,19 @@ class Modules extends Controller
         return response()->json(compact('Modules'), 200);
     }
     public function getShow($id){
-        $Modules = \App\Modules\Modules::find($id);
-        return response()->json(compact('Modules'), 200);
+        $Module = \App\Modules\Modules::find($id);
+        return response()->json(compact('Module'), 200);
     }
     public function getPiles($id){
-        $Modules = \App\Modules\Modules::find($id);
-        $Prof = $Modules->Piles;
-        foreach ($Prof as $Pr)
-            $Pr->Prof;
-        return response()->json(compact('Modules'), 200);
+        $Module = \App\Modules\Modules::find($id);
+        if($Module != null){
+            $Prof = $Module->Piles;
+            if($Prof != null){
+                foreach ($Prof as $Pr)
+                    $Pr->Prof;
+            }
+        }
+        return response()->json(compact('Module'), 200);
     }
 
     public function postNew(Request $request){
@@ -46,11 +50,11 @@ class Modules extends Controller
             if ($module->saveOrFail()) {
                 return response()->json($module, 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
             }
         }
         else{
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
     public function postEdite(Request $request, $id){
@@ -64,7 +68,7 @@ class Modules extends Controller
 
             return response()->json(['error' => false], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
     public function postRestore($id){
@@ -74,7 +78,7 @@ class Modules extends Controller
             return response()->json(['error' => false], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 401);
+            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -82,11 +86,11 @@ class Modules extends Controller
         $module = \App\Modules\Modules::withTrashed()->find($id);
         if ($module->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => true, 'message' => 'Deleted_for_ever'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
         }
         else{
             $module->delete();
-            return response()->json(['error' => true, 'message' => 'Deleted'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
         }
     }
 }

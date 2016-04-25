@@ -29,13 +29,15 @@ class Reponses extends Controller
         return response()->json(compact('reponses'), 200);
     }
     public function getQuestion($id){
-        $reponses = \App\Modules\Reponses::find($id);
-        $Question = $reponses->Question;
+        $reponse = \App\Modules\Reponses::find($id);
+        if($reponse != null)
+            $Question = $reponse->Question;
         return response()->json(compact('Question'), 200);
     }
     public function getFull($id){
         $reponses = \App\Modules\Reponses::find($id);
-        $reponses->setRelation('Question',$reponses->Question);
+        if($reponses != null)
+            $reponses->Question;
         return response()->json(compact('reponses'), 200);
     }
 
@@ -50,11 +52,11 @@ class Reponses extends Controller
             if ($reponse->saveOrFail()) {
                 return response()->json($reponse, 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
             }
         }
         else{
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
 
@@ -69,7 +71,7 @@ class Reponses extends Controller
             
             return response()->json(['error' => false], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
 
@@ -80,7 +82,7 @@ class Reponses extends Controller
             return response()->json(['error' => false], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 401);
+            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
         }
     }
 
@@ -89,11 +91,11 @@ class Reponses extends Controller
         $reponse = \App\Modules\Reponses::withTrashed()->find($id);
         if ($reponse->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => true, 'message' => 'Deleted_for_ever'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
         }
         else{
             $reponse->delete();
-            return response()->json(['error' => true, 'message' => 'Deleted'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
         }
     }
 }

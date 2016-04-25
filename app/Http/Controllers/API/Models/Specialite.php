@@ -25,46 +25,62 @@ class Specialite extends Controller
     
     public function getIndex()
     {
-        $specialites = \App\Modules\Specialite::all();
-        return response()->json(compact('specialites'), 200);
+        $Specialites = \App\Modules\Specialite::all();
+        return response()->json(compact('Specialites'), 200);
     }
     public function getShow($id)
     {
-        $specialite = \App\Modules\Specialite::find($id);
-        return response()->json(compact('specialite'), 200);
+        $Specialite = \App\Modules\Specialite::find($id);
+        return response()->json(compact('Specialite'), 200);
     }
     public function getModules($id){
         $specialite = \App\Modules\Specialite::find($id);
-        $Modules = $specialite->Modules;
-        foreach ($Modules as $module)
-            $module->Piles;
+        if($specialite != null){
+            $Modules = $specialite->Modules;
+            if($Modules != null){
+                foreach ($Modules as $module)
+                    $module->Piles;
+            }
+        }
         return response()->json(compact('specialite'), 200);
     }
     public function getProfs($id){
         $specialite = \App\Modules\Specialite::find($id);
-        $Profs = $specialite->ProfSpecialite;
-        foreach ($Profs as $Pr)
-            $Pr->Prof;
+        if($specialite != null){
+            $Profs = $specialite->ProfSpecialite;
+            if($Profs != null){
+                foreach ($Profs as $Pr)
+                    $Pr->Prof;
+            }
+        }
         return response()->json(compact('Profs'), 200);
     }
     public function getEtudiants($id){
         $specialite = \App\Modules\Specialite::find($id);
-        $Etudiants = $specialite->Etudiant;
+        if($specialite != null)
+            $Etudiants = $specialite->Etudiant;
         return response()->json(compact('Etudiants'), 200);
     }
     public function getFull($id){
         $specialite = \App\Modules\Specialite::find($id);
-        $Modules = $specialite->Modules;
-        foreach ($Modules as $module){
-            $piles = $module->Piles;
-            foreach ($piles as $pile)
-                $pile->Prof_;
+        if($specialite != null){
+            $Modules = $specialite->Modules;
+            if($Modules != null){
+                foreach ($Modules as $module){
+                    $piles = $module->Piles;
+                    if($piles != null){
+                        foreach ($piles as $pile)
+                            $pile->Prof_;
+                    }
+                }
+            }
+            $Profs = $specialite->ProfSpecialite;
+            if($Profs != null){
+                foreach ($Profs as $Pr)
+                    $Pr->Prof;
+            }
+            $specialite->Etudiant;
         }
-
-        $Profs = $specialite->ProfSpecialite;
-        foreach ($Profs as $Pr)
-            $Pr->Prof;
-        $specialite->Etudiant;
         return response()->json(compact('specialite'), 200);
     }
 
@@ -80,15 +96,15 @@ class Specialite extends Controller
             if ($specialite->saveOrFail()) {
                 return response()->json(compact('specialite'), 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
             }
         } else {
-            return response()->json(array('error' => false, 'Message' => $validation), 401);
+            return response()->json(array('error' => false, 'Message' => $validation), 406);
         }
     }
     public function postEdite(Request $request, $id)
     {
-        $validation = Validation::Specialite($request);
+        $validation = Validation::SpecialiteUpdate($request);
         if ($validation === "done") {
             \App\Modules\Specialite::where('id',$id)->update([
                 'abbreviation' => $request->input('abbreviation'),
@@ -96,7 +112,7 @@ class Specialite extends Controller
             ]);
             return response()->json(['error' => false], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
     public function postRestore($id){
@@ -106,7 +122,7 @@ class Specialite extends Controller
             return response()->json(['error' => false], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 401);
+            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -114,11 +130,11 @@ class Specialite extends Controller
         $specialite = \App\Modules\Specialite::withTrashed()->find($id);
         if ($specialite->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => true, 'message' => 'Deleted_for_ever'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
         }
         else{
             $specialite->delete();
-            return response()->json(['error' => true, 'message' => 'Deleted'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
         }
     }
 

@@ -22,39 +22,49 @@ class Piles extends Controller
     }
 
     public function getIndex(){
-        $piles = \App\Modules\Piles::all();
-        return response()->json($piles, 200);
+        $Piles = \App\Modules\Piles::all();
+        return response()->json(compact('Piles'), 200);
     }
     public function getShow($id){
-        $piles = \App\Modules\Piles::find($id);
-        return response()->json(compact('piles'), 200);
+        $Pile= \App\Modules\Piles::find($id);
+        return response()->json(compact('Pile'), 200);
     }
     public function getProf($id){
-        $piles = \App\Modules\Piles::find($id);
-        $Prof = $piles->Prof_;
+        $Pile = \App\Modules\Piles::find($id);
+        if($Pile != null)
+            $Prof = $Pile->Prof_;
         return response()->json(compact('Prof'), 200);
     }
     public function getQuestion($id){
-        $piles = \App\Modules\Piles::find($id);
-        $Questions = $piles->Questions;
+        $Pile = \App\Modules\Piles::find($id);
+        if($Pile != null)
+            $Questions = $Pile->Questions;
         return response()->json(compact('Questions'), 200);
     }
     public function getQuestionrand($id,$count){
-        $piles = \App\Modules\Piles::find($id);
-        $Question = Questions::where('Pile_ID',$piles->id)->orderByRaw("RAND()")->limit($count)->get();
+        $Pile = \App\Modules\Piles::find($id);
+        if($Pile != null)
+            $Question = Questions::where('Pile_ID',$Pile->id)->orderByRaw("RAND()")->limit($count)->get();
         return response()->json(compact('Question'), 200);
     }
     public function getModule($id){
-        $piles = \App\Modules\Piles::find($id);
-        $Module = $piles->Module;
+        $Pile = \App\Modules\Piles::find($id);
+        if($Pile != null)
+            $Module = $Pile->Module;
         return response()->json(compact('Module'), 200);
     }
     public function getFull($id){
-        $piles = \App\Modules\Piles::find($id);
-        $piles->setRelation('Prof_',$piles->Prof_);
-        $piles->setRelation('Questions',$piles->Questions);
-        $piles->setRelation('Module',$piles->Module);
-        return response()->json(compact('piles'), 200);
+        $Pile = \App\Modules\Piles::find($id);
+        if($Pile != null){
+            $Pile->Prof_;
+            $quest = $Pile->Questions;
+            if($quest != null){
+                foreach ($quest as $qs)
+                    $qs->Reponses;
+            }
+            $Pile->Module;
+        }
+        return response()->json(compact('Pile'), 200);
     }
 
     public function postNew(Request $request){
@@ -76,10 +86,10 @@ class Piles extends Controller
                 if ($pile->saveOrFail()) {
                     return response()->json($pile, 200);
                 } else {
-                    return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                    return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
                 }
             }
-            return response()->json(array('error' => false, 'Message' => $validation), 401);
+            return response()->json(array('error' => false, 'Message' => $validation), 406);
         }
         return response()->json(array('error' => false, 'Message' => "Just_Prof_can_add_piles"), 401);
     }
@@ -97,7 +107,7 @@ class Piles extends Controller
                 ]);
             return response()->json(['error' => false], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
     public function postRestore($id){
@@ -107,7 +117,7 @@ class Piles extends Controller
             return response()->json(['error' => false], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 401);
+            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -115,11 +125,11 @@ class Piles extends Controller
         $pile = \App\Modules\Piles::withTrashed()->find($id);
         if ($pile->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => true, 'message' => 'Deleted_for_ever'], 401);
+            return response()->json(['error' => falee, 'message' => 'Deleted_for_ever'], 200);
         }
         else{
             $pile->delete();
-            return response()->json(['error' => true, 'message' => 'Deleted'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
         }
     }
 }

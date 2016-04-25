@@ -61,10 +61,10 @@ class Questions extends Controller
             if ($question->saveOrFail()) {
                 return response()->json($question, 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 401);
+                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
             }
         }
-        return response()->json(array('error' => false, 'Message' => $validation), 401);
+        return response()->json(array('error' => false, 'Message' => $validation), 406);
     }
     public function postEdite(Request $request,$id){
         $validation = Validation::Questions($request);
@@ -79,7 +79,7 @@ class Questions extends Controller
                 ]);
             return response()->json(['error' => false], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 401);
+            return response()->json(['error' => true, 'message' => $validation], 406);
         }
     }
     public function postRestore($id){
@@ -89,7 +89,7 @@ class Questions extends Controller
             return response()->json(['error' => false], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 401);
+            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -97,11 +97,11 @@ class Questions extends Controller
         $question = \App\Modules\Questions::withTrashed()->find($id);
         if ($question->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => true, 'message' => 'Deleted_for_ever'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
         }
         else{
             $question->delete();
-            return response()->json(['error' => true, 'message' => 'Deleted'], 401);
+            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
         }
     }
 }

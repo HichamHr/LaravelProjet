@@ -17,8 +17,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('register', 'API\Auth@Register');
 
     Route::get('profile', ['uses' => 'API\Auth@ProfileAccount']);
-    Route::post('avatar', ['uses' => 'API\Auth@UpdateAvatar']);
-    
+
+    Route::controller('profile','API\Models\Profile');
     Route::controller('specialite', 'API\Models\Specialite');
     Route::controller('exam', 'API\Models\Exams');
     Route::controller('module', 'API\Models\Modules');
