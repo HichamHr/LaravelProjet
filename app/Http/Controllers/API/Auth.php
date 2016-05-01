@@ -88,19 +88,4 @@ class Auth extends Controller
         }
         return null;
     }
-    public function ProfileAccount()
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
-            $user->Etudiant;
-            return response()->json(array('compt' => $user), 200);
-        } else if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
-            $user->Prof;
-            return response()->json(array('compt' => $user), 200);
-        } else if ($user->hasRole(env('ADMIN_PERMISSION_NAME', "Admin"))) {
-            $user->Admin;
-            return response()->json(array('compt' => $user), 200);
-        }
-        return response()->json(array('success' => false, 'Message' => 'invalide_Profile'), 404);
-    }
 }
