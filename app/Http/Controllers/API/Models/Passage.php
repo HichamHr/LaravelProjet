@@ -17,7 +17,15 @@ class Passage extends Controller
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
-        $this->middleware('roles:etudiant,prof,admin');
+        $this->middleware('roles:prof,admin',
+            ['except'=>[
+                'getIndex',
+                'getExame',
+                'getQuestion',
+                'getReponse',
+                'getFull',
+                'postNew',
+            ]]);
     }
     
     public function getIndex(){
@@ -71,7 +79,7 @@ class Passage extends Controller
                 ))->update(array(
                     'Rep' => $request->input('Rep')
                 ));
-                return response()->json('Updated', 200);
+                return response()->json(array('flash' => 'Passage_Updated'), 200);
             }
             else{
                 $passage = new \App\Modules\Passage();
@@ -82,12 +90,12 @@ class Passage extends Controller
                 if ($passage->save()) {
                     return response()->json($passage, 200);
                 } else {
-                    return response()->json(array('error' => true, 'Message' => "Error_Add"), 500);
+                    return response()->json(array('flash' => "Error_Add_Passage"), 500);
                 }
             }
 
         }
-        return response()->json(['error' => true, 'message' => $validation], 406);
+        return response()->json(['flash' => $validation], 406);
         
     }
 

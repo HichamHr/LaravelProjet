@@ -59,12 +59,12 @@ class Questions extends Controller
             $question->Score = $request->input('Score');
             $question->Pile_ID = $request->input('Pile_ID');
             if ($question->saveOrFail()) {
-                return response()->json($question, 200);
+                return response()->json(array('flash' => $question), 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
+                return response()->json(array('flash' => "Error_Add_Question"), 500);
             }
         }
-        return response()->json(array('error' => false, 'Message' => $validation), 406);
+        return response()->json(array('flash' => $validation), 406);
     }
     public function postEdite(Request $request,$id){
         $validation = Validation::Questions($request);
@@ -77,19 +77,19 @@ class Questions extends Controller
                     'Score' => $request->input('Score'),
                     'Pile_ID' => $request->input('Pile_ID'),
                 ]);
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Question_Updated"], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 406);
+            return response()->json(['flash' => $validation], 406);
         }
     }
     public function postRestore($id){
         $question = \App\Modules\Questions::withTrashed()->find($id);
         if ($question->trashed()) {
             $question->restore();
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Question_Restored"], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
+            return response()->json(['flash' => 'Question_Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -97,11 +97,11 @@ class Questions extends Controller
         $question = \App\Modules\Questions::withTrashed()->find($id);
         if ($question->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
+            return response()->json(['flash' => 'Question_Deleted_for_ever'], 200);
         }
         else{
             $question->delete();
-            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
+            return response()->json(['flash' => 'Question_Deleted'], 200);
         }
     }
 }

@@ -94,12 +94,12 @@ class Specialite extends Controller
             $specialite->abbreviation = $request->input('abbreviation');
             $specialite->intitule = $request->input('intitule');
             if ($specialite->saveOrFail()) {
-                return response()->json(compact('specialite'), 200);
+                return response()->json(array('flash' => $specialite), 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
+                return response()->json(array('flash' => "Error_Add_Specialite"), 500);
             }
         } else {
-            return response()->json(array('error' => false, 'Message' => $validation), 406);
+            return response()->json(array('flash' => $validation), 406);
         }
     }
     public function postEdite(Request $request, $id)
@@ -110,19 +110,19 @@ class Specialite extends Controller
                 'abbreviation' => $request->input('abbreviation'),
                 'intitule' => $request->input('intitule'),
             ]);
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Specialite_Updated"], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 406);
+            return response()->json(['flash' => $validation], 406);
         }
     }
     public function postRestore($id){
         $specialite = \App\Modules\Specialite::withTrashed()->find($id);
         if ($specialite->trashed()) {
             $specialite->restore();
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Specialite_Restored"], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
+            return response()->json(['flash' => 'Specialite_Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -130,11 +130,11 @@ class Specialite extends Controller
         $specialite = \App\Modules\Specialite::withTrashed()->find($id);
         if ($specialite->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
+            return response()->json(['flash' => 'Specialite_Deleted_for_ever'], 200);
         }
         else{
             $specialite->delete();
-            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
+            return response()->json(['flash' => 'Specialite_Deleted'], 200);
         }
     }
 

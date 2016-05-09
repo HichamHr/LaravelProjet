@@ -17,7 +17,7 @@ class Profile extends Controller
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
-        $this->middleware('roles:etudiant,prof,admin');
+        $this->middleware('roles:prof,admin',['except'=>['getIndex','getAll','getUser','postAvatar']]);
     }
 
     public function getIndex(){
@@ -64,6 +64,7 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
+
     public function postBlock($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -76,7 +77,6 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
-
     public function postUnblock($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -89,7 +89,6 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
-
     public function postActivate($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -109,26 +108,27 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
-
     public function postAvatar(Request $request)
     {
         $validation = Validation::Avatar($request);
         if ($validation === "done") {
             $user = JWTAuth::parseToken()->authenticate();
-            $tblName = "";
+            $tblName = ""; $champId = "";
             if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
+                $champId = "compte_id";
                 $tblName = "etudiant";
             } else if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
+                $champId = "compte";
                 $tblName = "prof";
             } else if ($user->hasRole(env('ADMIN_PERMISSION_NAME', "Admin"))) {
+                $champId = "compte";
                 $tblName = "admin";
             }
 
             $imageName = $user->id . '.' . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->move(base_path() . '/public/images/avatars/', $imageName);
-            echo '<img src="' . asset("images/avatars/$imageName") . '"/>';
 
-            DB::table($tblName)->where('compte_id', $user->id)
+            DB::table($tblName)->where($champId, $user->id)
                 ->update(
                     [
                         'avatar' => asset("images/avatars/$imageName")

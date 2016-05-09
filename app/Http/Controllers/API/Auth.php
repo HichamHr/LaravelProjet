@@ -26,10 +26,8 @@ class Auth extends Controller
     public function __construct()
     {
         $this->middleware('cors');
-        $this->middleware('tokenRefresh', ['only' => ['ProfileAccount']]);
         $this->middleware('jwt.auth', ['except' => ['Login', 'Register']]);
     }
-
 
     public function Login(Request $request)
     {
@@ -38,11 +36,11 @@ class Auth extends Controller
         try {
             // verify the credentials and create a token for the user
             if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+                return response()->json(['flash' => 'invalid_credentials'], 404);
             }
         } catch (JWTException $e) {
             // something went wrong
-            return response()->json(['error' => 'could_not_create_token'], 500);
+            return response()->json(['flash' => 'could_not_create_token'], 500);
         }
 
         // if no errors are encountered we can return a JWT
@@ -63,28 +61,27 @@ class Auth extends Controller
                     $user->role = $role;
                     $user->phone = $request->input('phone');
                     $user->password = Hash::make($request->input('password'));
-                    $saveU = $user->save();
-                    $saveData = false;
+                    $user->save();
                     if ($role === "prof") {
                         echo $user->id;
                         $prof = new  Prof();
                         $prof->CIN = $request->input('CIN');
                         $prof->compte = $user->id;
-                        $saveData = $prof->save();
+                        $prof->save();
                     } else if ($role === "etudiant") {
                         echo $user->id;
                         $etudiant = new Etuduant();
                         $etudiant->CIN = $request->input('CIN');
                         $etudiant->compte_id = $user->id;
                         $etudiant->id_specialite = 0;
-                        $saveData = $etudiant->save();
+                        $etudiant->save();
                     } else {
                         $user->delete();
                     }
-                    return response()->json(array('success' => true, 'SaveCompt' => $saveU, 'SaveData' => $saveData), 200);
+                    return response()->json(array('flash' => "registration_done"), 200);
                 });
         } else {
-            return response()->json(array('success' => false, 'Message' => $validation), 400);
+            return response()->json(array("flash" => $validation), 400);
         }
         return null;
     }

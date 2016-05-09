@@ -17,7 +17,15 @@ class Exams extends Controller
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
-        $this->middleware('roles:etudiant,prof,admin');
+        $this->middleware('roles:prof,admin',
+            ['except'=>[
+                'getIndex',
+                'getShow',
+                'getEtudiant',
+                'getPile',
+                'getPassages',
+                'getFull'
+            ]]);
     }
     
     public function getIndex(){
@@ -71,19 +79,18 @@ class Exams extends Controller
             if ($exame->saveOrFail()) {
                 return response()->json($exame, 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
+                return response()->json(array('flash' => "Error_Add_New_Exam"), 500);
             }
         }
         else{
-            return response()->json(['error' => true, 'message' => $validation], 406);
+            return response()->json(['flash' => $validation], 406);
         }
     }
-
     public function postEdite(Request $request, $id){
         \App\Modules\Exams::where('id',$id)->update([
             'description' => $request->input('description'),
         ]);
-        return response()->json(['error' => false], 200);
+        return response()->json(['flash' => 'Exame_Updated'], 200);
     }
     
 }

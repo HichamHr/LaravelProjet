@@ -86,12 +86,12 @@ class Piles extends Controller
                 if ($pile->saveOrFail()) {
                     return response()->json($pile, 200);
                 } else {
-                    return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
+                    return response()->json(array('flash' => "Error_Add"), 500);
                 }
             }
-            return response()->json(array('error' => false, 'Message' => $validation), 406);
+            return response()->json(array('flash' => $validation), 406);
         }
-        return response()->json(array('error' => false, 'Message' => "Just_Prof_can_add_piles"), 401);
+        return response()->json(array('flash' => "Just_Prof_can_add_piles"), 401);
     }
     public function postEdite(Request $request,$id){
         $validation = Validation::Piles($request);
@@ -105,19 +105,19 @@ class Piles extends Controller
                     'valide_Score' => $request->input('valide_Score'),
                     'module_ID' => $request->input('module_ID'),
                 ]);
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Pile_Updated"], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 406);
+            return response()->json(['flash' => $validation], 406);
         }
     }
     public function postRestore($id){
         $pile = \App\Modules\Piles::withTrashed()->find($id);
         if ($pile->trashed()) {
             $pile->restore();
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Pile_Restored"], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
+            return response()->json(['flash' => 'Pile_Not_Fond'], 404);
         }
     }
     public function postDelete($id)
@@ -125,11 +125,11 @@ class Piles extends Controller
         $pile = \App\Modules\Piles::withTrashed()->find($id);
         if ($pile->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => falee, 'message' => 'Deleted_for_ever'], 200);
+            return response()->json(['flash' => 'Pile_Deleted_for_ever'], 200);
         }
         else{
             $pile->delete();
-            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
+            return response()->json(['flash' => 'Pile_Deleted'], 200);
         }
     }
 }

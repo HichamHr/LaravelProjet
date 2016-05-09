@@ -50,9 +50,9 @@ class Reponses extends Controller
             $reponse->Question_id = $request->input('Question_id');
 
             if ($reponse->saveOrFail()) {
-                return response()->json($reponse, 200);
+                return response()->json(array('flash'=>$reponse), 200);
             } else {
-                return response()->json(array('error' => false, 'Message' => "Error_Add"), 500);
+                return response()->json(array('flash' => "Error_Add_Reponse"), 500);
             }
         }
         else{
@@ -69,9 +69,9 @@ class Reponses extends Controller
                 'Question_id' => $request->input('reponse'),
             ]);
             
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Reponse_Updated"], 200);
         } else {
-            return response()->json(['error' => true, 'message' => $validation], 406);
+            return response()->json(['flash' => $validation], 406);
         }
     }
 
@@ -79,10 +79,10 @@ class Reponses extends Controller
         $reponse = \App\Modules\Reponses::withTrashed()->find($id);
         if ($reponse->trashed()) {
             $reponse->restore();
-            return response()->json(['error' => false], 200);
+            return response()->json(['flash' => "Reponse_Restored"], 200);
         }
         else{
-            return response()->json(['error' => true, 'message' => 'Not_Fond'], 404);
+            return response()->json(['error' => 'Reponse_Not_Fond'], 404);
         }
     }
 
@@ -91,11 +91,11 @@ class Reponses extends Controller
         $reponse = \App\Modules\Reponses::withTrashed()->find($id);
         if ($reponse->trashed()) {
             //$specialite->forceDelete();
-            return response()->json(['error' => false, 'message' => 'Deleted_for_ever'], 200);
+            return response()->json(['flash' => 'Reponse_Deleted_for_ever'], 200);
         }
         else{
             $reponse->delete();
-            return response()->json(['error' => false, 'message' => 'Deleted'], 200);
+            return response()->json(['flash' => 'Reponse_Deleted'], 200);
         }
     }
 }
