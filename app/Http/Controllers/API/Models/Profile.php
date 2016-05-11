@@ -23,7 +23,10 @@ class Profile extends Controller
     public function getIndex(){
         $user = JWTAuth::parseToken()->authenticate();
         if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
-            $user->Etudiant;
+            $Etudiant = $user->Etudiant;
+            if($Etudiant != null){
+                $Etudiant->Specialite;
+            }
             return response()->json(array('compt' => $user), 200);
         } else if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
             $user->Prof;

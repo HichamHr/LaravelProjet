@@ -24,7 +24,8 @@ class Exams extends Controller
                 'getEtudiant',
                 'getPile',
                 'getPassages',
-                'getFull'
+                'getFull',
+                'postNew'
             ]]);
     }
     
