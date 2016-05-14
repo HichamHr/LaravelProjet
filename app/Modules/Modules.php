@@ -24,7 +24,7 @@ class Modules extends Model
 
     protected $table = 'modules';
     protected $fillable = ['numero','nom','MH','specialite'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
     protected $dates = ['deleted_at'];
 
     public $timestamps = false;

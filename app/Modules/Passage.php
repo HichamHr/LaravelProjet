@@ -21,7 +21,7 @@ class Passage extends Model
     
     protected $table = 'passage';
     protected $fillable = ['exam_ID','Question','Rep'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
     
     protected  $primaryKey = 'exam_ID';
 

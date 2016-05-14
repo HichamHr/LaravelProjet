@@ -25,6 +25,7 @@ class Passage extends Controller
                 'getReponse',
                 'getFull',
                 'postNew',
+                'postNewarr'
             ]]);
     }
     
@@ -57,7 +58,19 @@ class Passage extends Controller
         $Passage = \App\Modules\Passage::find($id);
         if($Passage != null){
             $Passage->Exam;
-            $Passage->Quest;
+            $question = $Passage->Quest;
+            $Reponses = null;
+            if($question != null){
+                $Reponses = $question->Reponses;
+                if($Reponses != null){
+                    foreach ($Reponses as $Rep){
+                        if($Rep->is_true != "f"){
+                            $Rep->istrue = true;
+                        }
+                    }
+                }
+
+            }
             $Passage->Reponses;
         }
         return response()->json(compact('Passage'), 200);
@@ -97,6 +110,49 @@ class Passage extends Controller
         }
         return response()->json(['flash' => $validation], 406);
         
+    }
+    public function postNewarr($examId,Request $request){
+        $Reponses = $request->input("json");
+        $Passages =  (array) json_decode(base64_decode($Reponses));
+        echo $Reponses;
+
+        foreach ($Passages as $_Passage){
+            if($_Passage->isSelected) {
+                $_Passage->Question = $_Passage->Question_id;
+
+                $passageExist = DB::table('passage')->where(array(
+                    'exam_ID'=>$examId,
+                    'Question'=>$_Passage->Question,
+                    'Rep' => $_Passage->id
+                ))->exists();
+
+                if($passageExist){
+                    DB::table('passage')->where(array(
+                        'exam_ID'=>$examId,
+                        'Question'=>$_Passage->Question,
+                        'Rep' => $_Passage->id
+                    ))->update(array(
+                        'Rep' => $_Passage->id
+                    ));
+                    echo response()->json(array('flash' => 'Passage_Updated'), 200);
+                }
+                else{
+                    $passage = new \App\Modules\Passage();
+                    $passage->exam_ID = $examId;
+                    $passage->Question = $_Passage->Question;
+                    $passage->Rep = $_Passage->id;
+
+                    if ($passage->save()) {
+                        echo response()->json($passage, 200);
+                    } else {
+                        echo response()->json(array('flash' => "Error_Add_Passage"), 500);
+                    }
+                }
+                dump($_Passage);
+
+            }
+        }
+
     }
 
 }

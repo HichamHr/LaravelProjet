@@ -24,7 +24,7 @@ class Reponses extends Model
 
     protected $table = 'reponses';
     protected $fillable = ['id','reponse','is_true','Question_id'];
-    protected $hidden = ['is_true','deleted_at','created_at','updated_at'];
+    protected $hidden = ['is_true'/*,'deleted_at','created_at','updated_at'*/];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];

@@ -23,7 +23,7 @@ class Specialite extends Model
 
     protected $table = 'specialite';
     protected $fillable = ['id','abbreviation','intitule'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];

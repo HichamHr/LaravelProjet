@@ -17,6 +17,7 @@ class CreatePilesTable extends Migration {
 			$table->integer('id', true);
 			$table->string('Description');
 			$table->integer('duree');
+			$table->integer('nbr-question')->default(20);
 			$table->integer('Max_Score')->default(1000);
 			$table->integer('valide_Score')->default(700);
 			$table->integer('module_ID')->index('module');

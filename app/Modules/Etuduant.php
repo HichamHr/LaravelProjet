@@ -32,7 +32,7 @@ class Etuduant extends Model
 
     protected $table = 'etudiant';
     protected $fillable = ['CIN','Nom','Prenom','Adresse','avatar','compte_id','id_specialite','active','blocked'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'CIN';
 

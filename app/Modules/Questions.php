@@ -27,7 +27,7 @@ class Questions extends Model
 
     protected $table = 'questions';
     protected $fillable = ['question_ID','Question','Type','Score','Pile_ID'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'question_ID';
     protected $dates = ['deleted_at'];

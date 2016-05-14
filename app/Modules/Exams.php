@@ -28,7 +28,7 @@ class Exams extends Model
 
     protected $table = 'exams';
     protected $fillable = ['id','date','description','type','Pile','etudiant'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at','created_at','updated_at'];

@@ -36,7 +36,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     protected $table = 'comptes';
     protected $fillable = ['email', 'user', 'phone', 'role'];
-    protected $hidden = ['password', 'remember_token', 'deleted_at', 'created_at', 'updated_at'];
+    protected $hidden = ['password', 'remember_token', /*'deleted_at', 'created_at', 'updated_at'*/];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at','created_at','updated_at'];

@@ -29,7 +29,7 @@ class Prof extends Model
 
     protected $table = 'prof';
     protected $fillable = ['CIN','Nom','Prenom','Adresse','avatar','compte','active'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     public function compte(){
         return $this->hasOne('App\Modules\User',"id","compte");

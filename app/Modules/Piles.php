@@ -31,8 +31,8 @@ class Piles extends Model
     use SoftDeletes;
 
     protected $table = 'piles';
-    protected $fillable = ['id','Description','duree','Max_Score','valide_Score','module_ID','prof'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    protected $fillable = ['id','Description','duree','nbr-question','Max_Score','valide_Score','module_ID','prof'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at','created_at','updated_at'];

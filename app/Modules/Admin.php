@@ -28,7 +28,7 @@ class Admin extends Model
     
     protected $table = 'admin';
     protected $fillable = ['CIN','Nom','Prenom','Adresse','avatar','compte_id'];
-    protected $hidden = ['deleted_at','created_at','updated_at'];
+    //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'CIN';
 
