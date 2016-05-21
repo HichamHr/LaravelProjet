@@ -47,15 +47,20 @@ class Piles extends Model
     public function Exams(){
         return $this->hasMany('App\Modules\Exams','Pile','id');
     }
+
     public function Questions(){
         return $this->hasMany('App\Modules\Questions','Pile_ID','id');
     }
-    public function favourite(){
-        return $this->hasOne('App\Modules\Favourite','id_pile','id');
+
+    public function favourite()
+    {
+        return $this->hasOne('App\Modules\Favourite', 'id_pile', 'id');
+    }
 
     public function QuestionsRand(){
         return $this->Questions()->orderByRaw('RAND()')->limit($this->nbr_question);
     }
+
     public function ExamsOfficiel(){
         return $this->hasOne('App\Modules\Examsofficiel','id_pile','id');
     }
