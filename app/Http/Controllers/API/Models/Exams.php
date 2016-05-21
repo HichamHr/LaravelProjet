@@ -27,7 +27,8 @@ class Exams extends Controller
                 'getPassages',
                 'getFull',
                 'postNew',
-                'postEditeListQuestions'
+                'postEditeListQuestions',
+                'getExamQuestions'
             ]]);
     }
     
@@ -68,6 +69,31 @@ class Exams extends Controller
         return response()->json(compact('Exame'), 200);
     }
 
+    public function getExamQuestions($id){
+        $Exame = \App\Modules\Exams::find($id);
+        if($Exame != null){
+            $list_questions = json_decode($Exame->list_questions, true);
+            $Questions = \App\Modules\Questions::whereIn('question_ID',$list_questions)->get();
+            $passage = $Exame->Passages;
+            if($Questions != null){
+                foreach ($Questions as $qu){
+                    $questionReponses = $qu->ReponseRand;
+                    foreach ($questionReponses as $rep){
+                        $rep->isSelected = false;
+                        foreach ($passage as $pa){
+                            if($pa->Question === $qu->question_ID && $pa->Rep === $rep->id){
+                                $rep->isSelected = true;
+                                $qu->havRepo = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return response()->json(compact('Questions'), 200);
+        }
+        return response()->json(array('flash' => "Exame_Not_Found"), 404);
+    }
+
     public function postNew(Request $request){
         $validation = Validation::Exame($request);
         if ($validation === "done") {
@@ -78,8 +104,9 @@ class Exams extends Controller
             $exame->Pile = $request->input('pile');
             $exame->type = $request->input('type');
             $exame->etudiant = $user->Etudiant->CIN;
-
+            $pile = \App\Modules\Piles::find($request->input('pile'));
             if ($exame->saveOrFail()) {
+                $exame->duration = $pile->duree * 60 * 1000;
                 return response()->json($exame, 200);
             } else {
                 return response()->json(array('flash' => "Error_Add_New_Exam"), 500);

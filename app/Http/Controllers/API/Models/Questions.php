@@ -18,6 +18,15 @@ class Questions extends Controller
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
         $this->middleware('roles:etudiant,prof,admin');
+        $this->middleware('roles:prof,admin',
+            ['except'=>[
+                'getIndex',
+                'getShow',
+                'getPile',
+                'getReponses',
+                'getReponsesrand',
+                'getFull'
+            ]]);
     }
     
     public function getIndex(){
@@ -49,6 +58,7 @@ class Questions extends Controller
         $question->setRelation('Reponses',$question->Reponses);
         return response()->json(compact('question'), 200);
     }
+
 
     public function postNew(Request $request){
         $validation = Validation::Questions($request);

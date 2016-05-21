@@ -114,7 +114,6 @@ class Passage extends Controller
     public function postNewarr($examId,Request $request){
         $Reponses = $request->input("json");
         $Passages =  (array) json_decode(base64_decode($Reponses));
-        echo $Reponses;
 
         foreach ($Passages as $_Passage){
             if($_Passage->isSelected) {
@@ -148,8 +147,6 @@ class Passage extends Controller
                         echo response()->json(array('flash' => "Error_Add_Passage"), 500);
                     }
                 }
-                dump($_Passage);
-
             }
         }
 

@@ -54,6 +54,7 @@ class Piles extends Model
     public function Questions(){
         return $this->hasMany('App\Modules\Questions','Pile_ID','id');
     }
+
     public function QuestionsRand(){
         return $this->Questions()->orderByRaw('RAND()')->limit($this->nbr_question);
     }
