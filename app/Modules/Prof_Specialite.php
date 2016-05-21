@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Prof_Specialite extends Model
 {
+    
     protected $table = 'prof_specialite';
     protected $fillable = ['id_prof','id_specialite'];
     protected $hidden = ['deleted_at','created_at','updated_at'];

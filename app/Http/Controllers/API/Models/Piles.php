@@ -15,10 +15,21 @@ class Piles extends Controller
 {
     public function __construct()
     {
+        
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
-        $this->middleware('roles:etudiant,prof,admin');
+        $this->middleware('roles:prof,admin',
+            ['except'=>[
+                'getIndex',
+                'getProfPiles',
+                'getShow',
+                'getProf',
+                'getQuestion',
+                'getQuestionrand',
+                'getModule',
+                'getFull'
+            ]]);
     }
 
     public function getIndex($trashed = null){

@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Piles extends Model
 {
+    
     use SoftDeletes;
 
     protected $table = 'piles';

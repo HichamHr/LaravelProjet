@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Prof extends Model
 {
+    
     public $timestamps = false;
 
     protected $primaryKey = 'CIN';
