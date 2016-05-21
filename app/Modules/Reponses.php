@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Reponses extends Model
 {
+    
     use SoftDeletes;
 
     protected $table = 'reponses';

@@ -17,6 +17,7 @@ class Specialite extends Controller
 {
     public function __construct(Request $request)
     {
+        
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');

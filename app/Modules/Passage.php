@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Passage extends Model
 {
+    
     public $timestamps = false;
     
     protected $table = 'passage';

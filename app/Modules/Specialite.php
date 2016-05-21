@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Specialite extends Model
 {
+    
     use SoftDeletes;
     public $timestamps = false;
 

@@ -15,6 +15,7 @@ class Piles extends Controller
 {
     public function __construct()
     {
+        
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');

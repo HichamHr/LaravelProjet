@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Modules extends Model
 {
+    
     use SoftDeletes;
 
     protected $table = 'modules';
