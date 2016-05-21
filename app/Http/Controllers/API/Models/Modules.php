@@ -24,10 +24,19 @@ class Modules extends Controller
             ]]);
     }
     
-    public function getIndex(){
-        $Modules = \App\Modules\Modules::all();
+    public function getIndex($trashed = null){
+        if($trashed == null)
+            $Modules = \App\Modules\Modules::all();
+        else if($trashed === "trashed")
+            $Modules = \App\modules\Modules::onlyTrashed()->get();
+        else if($trashed === "all")
+            $Modules = \App\modules\Modules::withTrashed()->get();
+        else
+            $Modules = null;
+
         return response()->json(compact('Modules'), 200);
     }
+
     public function getShow($id){
         $Module = \App\Modules\Modules::find($id);
         return response()->json(compact('Module'), 200);

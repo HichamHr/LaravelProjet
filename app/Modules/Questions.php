@@ -43,4 +43,8 @@ class Questions extends Model
     public function Reponses(){
         return $this->hasMany('App\Modules\Reponses','Question_id','question_ID');
     }
+    
+    public function ReponseRand(){
+        return $this->Reponses()->orderByRaw('RAND()');
+    }
 }

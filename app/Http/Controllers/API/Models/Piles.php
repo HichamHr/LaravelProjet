@@ -21,10 +21,36 @@ class Piles extends Controller
         $this->middleware('roles:etudiant,prof,admin');
     }
 
-    public function getIndex(){
-        $Piles = \App\Modules\Piles::all();
+    public function getIndex($trashed = null){
+        if($trashed == null)
+            $Piles = \App\Modules\Piles::all();
+        else if($trashed === "trashed")
+            $Piles = \App\modules\Piles::onlyTrashed()->get();
+        else if($trashed === "all")
+            $Piles = \App\modules\Piles::withTrashed()->get();
+        else
+            $Piles = null;
+
         return response()->json(compact('Piles'), 200);
     }
+
+    public function getProfPiles($trashed = null){
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))){
+            $prof = $user->Prof;
+            if($trashed == null)
+                $Piles = \App\Modules\Piles::where("Prof",$prof->CIN)->get();
+            else if($trashed === "trashed")
+                $Piles = \App\modules\Piles::onlyTrashed()->where("Prof",$prof->CIN)->get();
+            else if($trashed === "all")
+                $Piles = \App\modules\Piles::withTrashed()->where("Prof",$prof->CIN)->get();
+            else
+                $Piles = null;
+
+            return response()->json(compact('Piles'), 200);
+        }
+    }
+
     public function getShow($id){
         $Pile= \App\Modules\Piles::find($id);
         return response()->json(compact('Pile'), 200);
@@ -41,11 +67,16 @@ class Piles extends Controller
             $Questions = $Pile->Questions;
         return response()->json(compact('Questions'), 200);
     }
-    public function getQuestionrand($id,$count){
+    public function getQuestionrand($id){
         $Pile = \App\Modules\Piles::find($id);
-        if($Pile != null)
-            $Question = Questions::where('Pile_ID',$Pile->id)->orderByRaw("RAND()")->limit($count)->get();
-        return response()->json(compact('Question'), 200);
+        if($Pile != null){
+            $Questions = $Pile->QuestionsRand;
+            if($Questions != null){
+                foreach ($Questions as $qs)
+                    $qs->ReponseRand;
+            }
+        }
+        return response()->json(compact('Questions'), 200);
     }
     public function getModule($id){
         $Pile = \App\Modules\Piles::find($id);
@@ -77,8 +108,10 @@ class Piles extends Controller
 
             if ($validation === "done") {
                 $pile = new \App\Modules\Piles();
+                $pile->titre = $request->input('titre');
                 $pile->Description = $request->input('Description');
                 $pile->duree = $request->input('duree');
+                $pile->nbr_question = $request->input('nbr_question');
                 $pile->Max_Score = $request->input('Max_Score');
                 $pile->valide_Score = $request->input('valide_Score');
                 $pile->module_ID = $request->input('module_ID');
@@ -94,42 +127,69 @@ class Piles extends Controller
         return response()->json(array('flash' => "Just_Prof_can_add_piles"), 401);
     }
     public function postEdite(Request $request,$id){
-        $validation = Validation::Piles($request);
-        if ($validation === "done") {
-            DB::table('piles')
-                ->where('id', $id)
-                ->update([
-                    'Description' => $request->input('Description'),
-                    'duree' => $request->input('duree'),
-                    'Max_Score' => $request->input('Max_Score'),
-                    'valide_Score' => $request->input('valide_Score'),
-                    'module_ID' => $request->input('module_ID'),
-                ]);
-            return response()->json(['flash' => "Pile_Updated"], 200);
-        } else {
-            return response()->json(['flash' => $validation], 406);
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))){
+            $prof = $user->Prof;
+            $pile = \App\Modules\Piles::find($id);
+            if($prof->CIN === $pile->prof){
+                $validation = Validation::Piles($request);
+                if ($validation === "done") {
+                    DB::table('piles')
+                        ->where('id', $id)
+                        ->update([
+                            'titre' => $request->input('titre'),
+                            'Description' => $request->input('Description'),
+                            'duree' => $request->input('duree'),
+                            'Max_Score' => $request->input('Max_Score'),
+                            'nbr_question' => $request->input('nbr_question'),
+                            'valide_Score' => $request->input('valide_Score'),
+                            'module_ID' => $request->input('module_ID'),
+                        ]);
+                    return response()->json(['flash' => "Pile_Updated"], 200);
+                } else {
+                    return response()->json(['flash' => $validation], 406);
+                }
+            }
+            return response()->json(['flash' => "Pile_Error_Permission"], 404);
         }
+        return response()->json(['flash' => "Must_Have_Prof_Compt"], 404);
     }
     public function postRestore($id){
-        $pile = \App\Modules\Piles::withTrashed()->find($id);
-        if ($pile->trashed()) {
-            $pile->restore();
-            return response()->json(['flash' => "Pile_Restored"], 200);
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
+            $prof = $user->Prof;
+            $pile = \App\Modules\Piles::withTrashed()->find($id);
+            if ($prof->CIN === $pile->prof) {
+                if ($pile->trashed()) {
+                    $pile->restore();
+                    return response()->json(['flash' => "Pile_Restored"], 200);
+                }
+                else{
+                    return response()->json(['flash' => 'Pile_Not_Fond'], 404);
+                }
+            }
+            return response()->json(['flash' => "Pile_Error_Permission"], 404);
         }
-        else{
-            return response()->json(['flash' => 'Pile_Not_Fond'], 404);
-        }
+        return response()->json(['flash' => "Must_Have_Prof_Compt"], 404);
     }
     public function postDelete($id)
     {
-        $pile = \App\Modules\Piles::withTrashed()->find($id);
-        if ($pile->trashed()) {
-            //$specialite->forceDelete();
-            return response()->json(['flash' => 'Pile_Deleted_for_ever'], 200);
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
+            $prof = $user->Prof;
+            $pile = \App\Modules\Piles::withTrashed()->find($id);
+            if ($prof->CIN === $pile->prof) {
+                if ($pile->trashed()) {
+                    //$specialite->forceDelete();
+                    return response()->json(['flash' => 'Pile_Deleted_for_ever'], 200);
+                }
+                else {
+                    $pile->delete();
+                    return response()->json(['flash' => 'Pile_Deleted'], 200);
+                }
+            }
+            return response()->json(['flash' => "Pile_Error_Permission"], 404);
         }
-        else{
-            $pile->delete();
-            return response()->json(['flash' => 'Pile_Deleted'], 200);
-        }
+        return response()->json(['flash' => "Must_Have_Prof_Compt"], 404);
     }
 }

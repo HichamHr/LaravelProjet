@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Models;
 
 use app\OpenTest\Validation;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 
@@ -17,16 +18,23 @@ class Profile extends Controller
         $this->middleware('cors');
         $this->middleware('jwt.auth');
         $this->middleware('tokenRefresh');
-        $this->middleware('roles:prof,admin',['except'=>['getIndex','getAll','getUser','postAvatar']]);
+        $this->middleware('roles:prof,admin',
+            ['except' =>
+                [
+                    'getIndex',
+                    'getAll',
+                    'getUser',
+                    'postAvatar',
+                    'getHaveExamNotFinished'
+                ]
+            ]
+        );
     }
 
     public function getIndex(){
         $user = JWTAuth::parseToken()->authenticate();
         if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
-            $Etudiant = $user->Etudiant;
-            if($Etudiant != null){
-                $Etudiant->Specialite;
-            }
+            $user->Etudiant;
             return response()->json(array('compt' => $user), 200);
         } else if ($user->hasRole(env('PROF_PERMISSION_NAME', "Prof"))) {
             $user->Prof;
@@ -36,9 +44,9 @@ class Profile extends Controller
             return response()->json(array('compt' => $user), 200);
         }
         return response()->json(array('success' => false, 'Message' => 'invalide_Profile'), 404);
-    }  
-    public function getAll()
-    {
+    }
+
+    public function getAll(){
         $COMPTS = \App\Modules\User::all();
         if ($COMPTS != null) {
             foreach ($COMPTS as $cm) {
@@ -53,8 +61,21 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPTS'), 200);
     }
-    public function getUser($id)
+
+    public function getEtudiants()
     {
+        $COMPTS = \App\Modules\User::all()->where("role", "etudiant");
+        if ($COMPTS != null) {
+            foreach ($COMPTS as $cm) {
+                if ($cm->hasRole(env('ETUDIANT_PERMISSION_NAME', 'Etudiant'))) {
+                    $cm->Etudiant;
+                }
+            }
+        }
+        return response()->json(compact('COMPTS'), 200);
+    }
+
+    public function getUser($id){
         $COMPT = \App\Modules\User::find($id);
         if ($COMPT != null) {
             if ($COMPT->hasRole(env('ETUDIANT_PERMISSION_NAME', 'Etudiant'))) {
@@ -68,6 +89,31 @@ class Profile extends Controller
         return response()->json(compact('COMPT'), 200);
     }
 
+    public function getHaveExamNotFinished(){
+        $user = JWTAuth::parseToken()->authenticate();
+
+        if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', 'Etudiant'))) {
+            $Etudiant = $user->Etudiant;
+            if($Etudiant != null){
+                $Exames = $Etudiant->LastExamCreationDate;
+                if($Exames != null){
+                    foreach ($Exames as $exame){
+                        $PileDuration = $exame->PileDuration;
+                        $diff  = Carbon::now()->diffInSeconds($exame->created_at);
+                        $final = (($PileDuration->duree*60)-$diff);
+                        if($final > 0){
+                            return response()->json(array("restTime"=>$final, "data"=>compact('exame')), 200);
+                        }
+                    }
+                    return response()->json(array("flash" => "No_Exam_Fond_At_This_Moment"), 404);
+                }
+                return response()->json(array("flash" => "No_Exam_Fond_For_User"), 404);
+            }
+        }
+        return response()->json(array("flash" => "User_is_not_Etudiant"), 406);
+    }
+
+
     public function postBlock($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -80,6 +126,7 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
+
     public function postUnblock($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -92,6 +139,7 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
+
     public function postActivate($id)
     {
         $COMPT = \App\Modules\User::find($id);
@@ -111,12 +159,14 @@ class Profile extends Controller
         }
         return response()->json(compact('COMPT'), 200);
     }
+
     public function postAvatar(Request $request)
     {
         $validation = Validation::Avatar($request);
         if ($validation === "done") {
             $user = JWTAuth::parseToken()->authenticate();
-            $tblName = ""; $champId = "";
+            $tblName = "";
+            $champId = "";
             if ($user->hasRole(env('ETUDIANT_PERMISSION_NAME', "Etudiant"))) {
                 $champId = "compte_id";
                 $tblName = "etudiant";

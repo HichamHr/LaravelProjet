@@ -27,7 +27,7 @@ class Exams extends Model
     use SoftDeletes;
 
     protected $table = 'exams';
-    protected $fillable = ['id','date','description','type','Pile','etudiant'];
+    protected $fillable = ['id','date','description','list_questions','type','Pile','etudiant'];
     //protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
@@ -40,6 +40,10 @@ class Exams extends Model
 
     public function Pile_(){
         return $this->hasOne('App\Modules\Piles','id','Pile');
+    }
+
+    public function PileDuration(){
+        return $this->Pile_()->select(array('duree','id'));
     }
 
     public function Passages(){

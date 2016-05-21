@@ -17,6 +17,7 @@ class CreateExamsTable extends Migration {
 			$table->integer('id',true);
 			$table->dateTime('date');
 			$table->string('description')->nullable();
+			$table->text('list_questions')->nullable();
 			$table->enum('type', array('Blanche','officiel'))->nullable();
 			$table->integer('Pile')->index('pile_exam');
 			$table->string('etudiant', 10)->index('exame_etudiant_idx');

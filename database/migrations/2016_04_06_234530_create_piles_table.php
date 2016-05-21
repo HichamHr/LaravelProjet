@@ -15,9 +15,10 @@ class CreatePilesTable extends Migration {
 		Schema::create('piles', function(Blueprint $table)
 		{
 			$table->integer('id', true);
-			$table->string('Description');
+			$table->string('titre');
+			$table->text('Description');
 			$table->integer('duree');
-			$table->integer('nbr-question')->default(20);
+			$table->integer('nbr_question')->default(20);
 			$table->integer('Max_Score')->default(1000);
 			$table->integer('valide_Score')->default(700);
 			$table->integer('module_ID')->index('module');

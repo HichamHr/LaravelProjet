@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Models;
 
 use app\OpenTest\Validation;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -25,7 +26,8 @@ class Exams extends Controller
                 'getPile',
                 'getPassages',
                 'getFull',
-                'postNew'
+                'postNew',
+                'postEditeListQuestions'
             ]]);
     }
     
@@ -93,5 +95,13 @@ class Exams extends Controller
         ]);
         return response()->json(['flash' => 'Exame_Updated'], 200);
     }
-    
+    public function postEditeListQuestions(Request $request, $id){
+        $update = \App\Modules\Exams::where('id',$id)->whereNull('list_questions')->update([
+            'list_questions' => $request->input('list_questions'),
+        ]);
+        if($update == 0)
+            return response()->json(['flash' => 'Exame_Have_Question_Prev'], 200);
+        else
+            return response()->json(['flash' => 'Exame_Update_list_questions'], 200);
+    }
 }

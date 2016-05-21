@@ -47,4 +47,8 @@ class Etuduant extends Model
     public function Exams(){
         return $this->hasMany('App\Modules\Exams','etudiant','CIN');
     }
+
+    public function LastExamCreationDate(){
+        return $this->Exams()->select(array('id','created_at','Pile'))->orderBy('id', 'DESC')->limit(1);
+    }
 }
