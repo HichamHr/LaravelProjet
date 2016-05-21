@@ -32,7 +32,7 @@ class Etuduant extends Model
 
     protected $table = 'etudiant';
     protected $fillable = ['CIN','Nom','Prenom','Adresse','avatar','compte_id','id_specialite','active','blocked'];
-    //protected $hidden = ['deleted_at','created_at','updated_at'];
+    protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'CIN';
 
@@ -40,7 +40,7 @@ class Etuduant extends Model
         return $this->hasOne('App\Modules\User',"id","compte_id");
     }
 
-    public function Specialite(){
+    public function specialite(){
         return $this->hasOne('App\Modules\Specialite','id','id_specialite');
     }
 
@@ -48,7 +48,8 @@ class Etuduant extends Model
         return $this->hasMany('App\Modules\Exams','etudiant','CIN');
     }
 
-    public function LastExamCreationDate(){
-        return $this->Exams()->select(array('id','created_at','Pile'))->orderBy('id', 'DESC')->limit(1);
+    public function Favourite(){
+        return $this->hasMany('App\Modules\Favourite',"id_etudiant","CIN")
+            ->selectRaw('id_pile');
     }
 }

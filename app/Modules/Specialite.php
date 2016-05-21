@@ -23,12 +23,12 @@ class Specialite extends Model
 
     protected $table = 'specialite';
     protected $fillable = ['id','abbreviation','intitule'];
-    //protected $hidden = ['deleted_at','created_at','updated_at'];
+    protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
 
-    public function Etudiant(){
+    public function etudiants(){
         return $this->hasMany('App\Modules\Etuduant','id_specialite','id')
             ->selectRaw('CIN,Nom,Prenom,avatar');
     }
