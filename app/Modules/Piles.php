@@ -10,18 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * App\Modules\Piles
  *
  * @property string $id
- * @property string $titre
  * @property string $Description
- * @property string $nbr_question
  * @property string $duree
  * @property string $Max_Score
  * @property string $valide_Score
  * @property integer $module_ID
  * @property integer $prof
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereTitre($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereDescription($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereNbr_question($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereDuree($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereMax_Score($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Piles whereValide_Score($value)
@@ -35,8 +31,8 @@ class Piles extends Model
     use SoftDeletes;
 
     protected $table = 'piles';
-    protected $fillable = ['id','titre','Description','duree','nbr_question','Max_Score','valide_Score','module_ID','prof'];
-    protected $hidden = [/*'deleted_at','created_at','updated_at'*/];
+    protected $fillable = ['id','Description','duree','Max_Score','valide_Score','module_ID','prof'];
+    protected $hidden = ['deleted_at','created_at','updated_at'];
 
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at','created_at','updated_at'];
@@ -54,9 +50,11 @@ class Piles extends Model
     public function Questions(){
         return $this->hasMany('App\Modules\Questions','Pile_ID','id');
     }
-    public function QuestionsRand(){
-        return $this->Questions()->orderByRaw('RAND()')->limit($this->nbr_question);
+    public function favourite(){
+        return $this->hasOne('App\Modules\Favourite','id_pile','id');
     }
-
+    public function ExamsOfficiel(){
+        return $this->hasOne('App\Modules\Examsofficiel','id_pile','id');
+    }
 
 }
